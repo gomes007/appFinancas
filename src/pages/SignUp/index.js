@@ -1,5 +1,5 @@
-import React, { useContext } from 'react';
-import { Platform } from 'react-native';
+import React, { useContext, useState } from "react";
+import { ActivityIndicator, Platform } from "react-native";
 
 import {
   AreaInput,
@@ -7,37 +7,42 @@ import {
   Container,
   Input,
   SubmitButton,
-  SubmitText
-} from '../SignIn/style';
+  SubmitText,
+} from "../SignIn/style";
 
-import { AuthContext } from '../../contexts/auth';
+import { AuthContext } from "../../contexts/auth";
 
+export default function SignUp() {  
 
+  const { signUp, loadingAuth } = useContext(AuthContext);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-export default function SignUp() {
-  const { user } = useContext(AuthContext);
   function handleSignUp() {
-    console.log(user);
+    if (nome === "" || email === "" || password === "") return;
+    signUp(nome, email, password);
   }
   return (
     <Background>
-      <Container
-        behavior={Platform.OS === 'ios' ? 'padding' : ''}
-        enabled
-      >
-        <AreaInput>
-          <Input
-            placeholder="Nome"
-            autoCorrect={false}
-            autoCapitalize="none"
-          />
-        </AreaInput>
+      <Container behavior={Platform.OS === "ios" ? "padding" : ""} enabled>
 
         <AreaInput>
           <Input
-            placeholder="Email"
+            placeholder="nome"
             autoCorrect={false}
             autoCapitalize="none"
+            value={nome}
+            onChangeText={(text) => setNome(text)}
+          />
+        </AreaInput>
+        <AreaInput>
+          <Input
+            placeholder="email"
+            autoCorrect={false}
+            autoCapitalize="none"
+            value={email}
+            onChangeText={(text) => setEmail(text)}
           />
         </AreaInput>
         <AreaInput>
@@ -45,11 +50,20 @@ export default function SignUp() {
             placeholder="Senha"
             autoCorrect={false}
             autoCapitalize="none"
+            value={password}
+            onChangeText={(text) => setPassword(text)}
+            secureTextEntry={true}
           />
         </AreaInput>
 
         <SubmitButton activeOpacity={0.8} onPress={handleSignUp}>
-          <SubmitText>Cadastrar</SubmitText>
+          {
+            loadingAuth ? (
+              <ActivityIndicator size={20} color="#fff" />
+            ) : (
+              <SubmitText>Cadastrar</SubmitText>
+            )
+          }
         </SubmitButton>
       </Container>
     </Background>
