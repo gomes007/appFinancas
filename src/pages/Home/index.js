@@ -1,10 +1,15 @@
-import React from "react";
-import { View, Text } from 'react-native';
+import React, { useContext } from "react";
+import { Button, Text, View } from 'react-native';
+
+import { AuthContext } from "../../contexts/auth";
 
 export default function Home() {
- return (
-   <View>
-        <Text>TELA HOME</Text>
-   </View>
+  const { signOut, user } = useContext(AuthContext);
+  return (
+    <View>
+      <Text>TELA HOME</Text>
+      <Text>{user && user.name}</Text>
+      <Button title="Sair" onPress={() => signOut()} />
+    </View>
   );
 }

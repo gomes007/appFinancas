@@ -56,24 +56,19 @@ function AuthProvider({ children }) {
 
   async function signIn(email, password) {
     setLoadingAuth(true);
-
     try {
       const response = await api.post('/login', {
         email: email,
         password: password
       })
-
       const { id, name, token } = response.data;
-
       const data = {
         id,
         name,
         token,
         email,
       };
-
       await AsyncStorage.setItem('@finToken', token);
-
       api.defaults.headers['Authorization'] = `Bearer ${token}`;
 
       setUser({
@@ -88,11 +83,21 @@ function AuthProvider({ children }) {
       console.log("ERRO AO LOGAR ", err);
       setLoadingAuth(false);
     }
-
   }
 
+
+  async function signOut() {
+    await AsyncStorage.clear()
+    .then(() => {
+      setUser(null);
+    })
+  };
+
+
+
+
   return (
-    <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, loadingAuth, loading }}>
+    <AuthContext.Provider value={{ signed: !!user, user, signUp, signIn, signOut, loadingAuth, loading }}>
       {children}
     </AuthContext.Provider>
   );
