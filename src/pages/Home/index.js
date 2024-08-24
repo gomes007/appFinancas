@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 
 
 import Header from '../../components/Header';
 import {
+  Area,
   Background,
-  ListBalance
+  List,
+  ListBalance,
+  Title
 } from './styles';
 
 import { format } from 'date-fns';
@@ -12,11 +16,15 @@ import api from '../../services/api';
 
 import { useIsFocused } from '@react-navigation/native';
 import BalanceItem from '../../components/BalanceItem';
+import HistoricoList from '../../components/HistoricoList';
+
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 
 export default function Home(){
   const isFocused = useIsFocused();
   const [listBalance, setListBalance] = useState([]);
+  const [movements, setMovements] = useState([]);
 
   const [dateMovements, setDateMovements] = useState(new Date())
 
@@ -27,6 +35,12 @@ export default function Home(){
     async function getMovements(){
       let dateFormated = format(dateMovements, 'dd/MM/yyyy');
 
+      const receives = await api.get('/receives', {
+        params:{
+          date: dateFormated
+        }
+      })
+
       const balance = await api.get('/balance', {
         params:{
           date: dateFormated 
@@ -34,6 +48,7 @@ export default function Home(){
       })
 
       if(isActive){
+        setMovements(receives.data)
         setListBalance(balance.data);
       }
     }
@@ -55,6 +70,22 @@ export default function Home(){
         keyExtractor={ item => item.tag }
         renderItem={ ({ item }) => ( <BalanceItem data={item} /> )}
       />
+
+      <Area>
+        <TouchableOpacity>
+          <Icon name="event" color="#121212" size={30} />
+        </TouchableOpacity>
+        <Title>Ultimas movimentações</Title>
+      </Area>
+
+      <List
+        data={movements}
+        keyExtractor={ item => item.id }
+        renderItem={ ({ item }) => <HistoricoList data={item} />  }
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 20 }}
+      />
+
 
     </Background>
   )
