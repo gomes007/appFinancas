@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { Background, Input, SubmitButton, SubmitText } from "./styles";
 
-import { Keyboard, SafeAreaView, TouchableWithoutFeedback, Alert } from "react-native";
+import { Alert, Keyboard, SafeAreaView, TouchableWithoutFeedback } from "react-native";
 
+import { useNavigation } from "@react-navigation/native";
+import { format } from "date-fns";
 import Header from "../../components/Header";
 import RegisterTypes from "../../components/RegisterTypes";
 import api from "../../services/api";
-import { format } from "date-fns";
-import { useNavigation } from "@react-navigation/native";
 
 export default function New() {
 
@@ -53,8 +53,16 @@ export default function New() {
             setValueInput('');
             setType('receita');
             Keyboard.dismiss();
-            alert('Registrado com sucesso!');
-            navigation.navigate('Home');
+            Alert.alert(
+                'Confirmação',
+                'Registrado com sucesso!',
+                [
+                    {
+                        text: 'OK',
+                        onPress: () => navigation.navigate('Home')
+                    }
+                ]
+            );
         }).catch(() => {
             alert('Erro ao registrar');
         });
